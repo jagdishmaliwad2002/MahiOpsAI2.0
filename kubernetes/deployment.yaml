@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mahiopsai2-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mahiopsai2
+  template:
+    metadata:
+      labels:
+        app: mahiopsai2
+    spec:
+      containers:
+      - name: mahiopsai2
+        image: mahiopsai2:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 5000
+        env:
+        - name: DATABASE_URL
+          value: "postgresql://postgres:postgres@host.docker.internal:5432/speedio"

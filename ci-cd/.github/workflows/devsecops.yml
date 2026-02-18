@@ -1,0 +1,22 @@
+name: DevSecOps Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Docker Image
+        run: docker build -t mahiopsai2.0 -f docker/Dockerfile .
+
+      - name: Run Trivy Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: mahiopsai2.0
