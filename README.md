@@ -155,7 +155,4 @@ DevOps & Cloud Engineer Enthusiast
 
 ---
 
-## ⭐ Interview Summary (60 seconds)
-
-> MahiOpsAI2.0 is a complete DevSecOps platform where CI/CD automation builds secure Docker images, Terraform manages infrastructure, Kubernetes handles orchestration, Vault secures secrets, and Prometheus + Grafana provide observability for production-like monitoring.
 
