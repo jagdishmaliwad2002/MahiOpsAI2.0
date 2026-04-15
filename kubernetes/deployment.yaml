@@ -14,10 +14,10 @@ spec:
     spec:
       containers:
       - name: mahiopsai2
-        image: mahiopsai2:latest
-        imagePullPolicy: Never
+        image: jack9005/mahiopsai:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 5000
         env:
         - name: DATABASE_URL
-          value: "postgresql://postgres:postgres@host.docker.internal:5432/speedio"
+          value: "postgresql://postgres:postgres@postgres:5432/speedio"

@@ -1,0 +1,24 @@
+services:
+  postgres:
+    image: postgres:15   # ✅ FIXED
+    container_name: postgres-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: mahiopsai
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  app:
+    image: jack9005/mahiopsai:latest
+    container_name: mahiopsai-app
+    depends_on:
+      - postgres
+    ports:
+      - "5000:5000"
+    environment:
+      DATABASE_URL: postgresql://postgres:1234@postgres:5432/mahiopsai
+
+volumes:
+  postgres_data:

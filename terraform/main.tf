@@ -1,47 +1,18 @@
-terraform {
-  required_providers {
-    docker = {
-      source  = "kreuzwerker/docker"
-      version = "~> 3.0.2"
-    }
-
-    kubernetes = {
-      source  = "hashicorp/kubernetes"
-      version = "~> 2.27.0"
-    }
-  }
-}
-
-# -------------------------------
-# Providers
-# -------------------------------
-
-provider "docker" {}
-
+# -----------------------------
+# 1. Provider (connect to Kubernetes)
+# -----------------------------
 provider "kubernetes" {
   config_path = "~/.kube/config"
 }
 
-# -------------------------------
-# Docker Image (IaC)
-# -------------------------------
-
-resource "docker_image" "mahiopsai2" {
-  name = "mahiopsai2:latest"
-
-  build {
-    context    = "../"
-    dockerfile = "docker/Dockerfile"
-  }
-}
-
-# -------------------------------
-# Kubernetes Deployment (IaC)
-# -------------------------------
-
+# -----------------------------
+# 2. Deployment (run your app)
+# -----------------------------
 resource "kubernetes_deployment" "mahiopsai2" {
+
   metadata {
     name = "mahiopsai2-tf"
+
     labels = {
       app = "mahiopsai2"
     }
@@ -65,10 +36,10 @@ resource "kubernetes_deployment" "mahiopsai2" {
 
       spec {
         container {
-          name  = "mahiopsai2"
-          image = "mahiopsai2:latest"
+          name  = "app"
+          image = "jack9005/mahiopsai:latest"
 
-          image_pull_policy = "Never"
+          image_pull_policy = "Always"
 
           port {
             container_port = 5000
@@ -76,10 +47,34 @@ resource "kubernetes_deployment" "mahiopsai2" {
 
           env {
             name  = "DATABASE_URL"
-            value = "postgresql://postgres:postgres@host.docker.internal:5432/speedio"
+            value = "postgresql://postgres:postgres@postgres:5432/speedio"
           }
         }
       }
     }
+  }
+}
+
+# -----------------------------
+# 3. Service (expose app)
+# -----------------------------
+resource "kubernetes_service" "mahiopsai2_service" {
+
+  metadata {
+    name = "mahiopsai2-service"
+  }
+
+  spec {
+    selector = {
+      app = "mahiopsai2"
+    }
+
+    port {
+      port        = 5000
+      target_port = 5000
+      node_port   = 30008
+    }
+
+    type = "NodePort"
   }
 }
