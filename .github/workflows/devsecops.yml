@@ -4,17 +4,20 @@ on:
   push:
     branches: [ "main" ]
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+# Explicitly grant read access to the repository contents
+permissions:
+  contents: read
 
 jobs:
   devsecops:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Manual Git Clone
-      run: |
-        git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/jagdishmaliwad2002/MahiOpsAI2.0.git .
+    - name: Checkout Code
+      uses: actions/checkout@v4
+      with:
+        # persist-credentials ensures subsequent steps can use git if needed
+        persist-credentials: true
 
     - name: Docker Login
       run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
@@ -24,3 +27,4 @@ jobs:
 
     - name: Push Docker Image
       run: docker push ${{ secrets.DOCKER_USERNAME }}/mahiopsai:latest
+
