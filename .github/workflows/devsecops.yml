@@ -4,9 +4,13 @@ on:
   push:
     branches: [ "main" ]
 
-# Explicitly grant read access to the repository contents
+# Fix: Explicitly grant permissions to allow the GITHUB_TOKEN to read repository contents
 permissions:
   contents: read
+
+env:
+  # Fix: Opt into Node.js 24 to align with GitHub's deprecation schedule and stop warning spam
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   devsecops:
@@ -14,9 +18,10 @@ jobs:
 
     steps:
     - name: Checkout Code
+      # Fix: Use the standard checkout action instead of manual git clone to avoid "directory not empty" errors
       uses: actions/checkout@v4
       with:
-        # persist-credentials ensures subsequent steps can use git if needed
+        # persist-credentials true (default) allows subsequent steps to use the git config if needed
         persist-credentials: true
 
     - name: Docker Login
