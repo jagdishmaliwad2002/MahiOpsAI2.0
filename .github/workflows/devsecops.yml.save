@@ -1,0 +1,26 @@
+name: MahiOpsAI DevSecOps Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+
+# Explicitly grant read access to the repository contents
+permissions:
+  contents: read
+
+jobs:
+  devsecops:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+      with:
+        # persist-credentials ensures subsequent steps can use git if needed
+        persist-credentials: true
+
+    - name: Docker Login
+      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+    - name: Build Docker Image
+      run: docker build -t ${{ secrets.DOCKER_USERNAME }}
