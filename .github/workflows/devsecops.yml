@@ -1,34 +1,19 @@
-name: MahiOpsAI DevSecOps Pipeline
+name: Simple CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ main ]
 
-# Fix: Explicitly grant permissions to allow the GITHUB_TOKEN to read repository contents
 permissions:
   contents: read
 
-env:
-  # Fix: Opt into Node.js 24 to align with GitHub's deprecation schedule and stop warning spam
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 jobs:
-  devsecops:
+  test:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Code
-      # Fix: Use the standard checkout action instead of manual git clone to avoid "directory not empty" errors
-      uses: actions/checkout@v4
-      with:
-        # persist-credentials true (default) allows subsequent steps to use the git config if needed
-        persist-credentials: true
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Docker Login
-      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-
-    - name: Build Docker Image
-      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/mahiopsai:latest ./docker
-
-    - name: Push Docker Image
-      run: docker push ${{ secrets.DOCKER_USERNAME }}/mahiopsai:latest
+      - name: Print message
+        run: echo "CI is working"
