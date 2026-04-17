@@ -21,7 +21,8 @@ jobs:
           node-version: '22'
 
       - name: Install dependencies
-        run: npm install
+        run: npm install --legacy-peer-deps
+        working-directory: ./app   # ✅ IMPORTANT FIX
 
       - name: Print success
-        run: echo "Node + npm working"
+        run: echo "npm install working"
